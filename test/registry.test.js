@@ -51,9 +51,9 @@ describe('Registry', function() {
         it ('should register ten agents', function(done) {
             var registered = 0;
             var onRegistered = function() {
-                    registered++;
-                    if (registered === 10)
-                        done();
+                registered++;
+                if (registered === 10)
+                    done();
             };
             for (var i = 0; i < 10; ++i) {
                 registry.register(mockRequest({
