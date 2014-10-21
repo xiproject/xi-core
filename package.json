@@ -1,0 +1,23 @@
+{
+  "name": "xi-core",
+  "version": "0.0.0",
+  "description": "",
+  "main": "main.js",
+  "config": {
+    "port": "2014"
+  },
+  "scripts": {
+    "start": "node main.js | node_modules/bunyan/bin/bunyan",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Vikrant Varma",
+  "dependencies": {
+    "bunyan": "^1.2.0",
+    "minimist": "^1.1.0",
+    "node-uuid": "^1.4.1",
+    "restify": "^2.8.3"
+  },
+  "devDependencies": {
+    "mocha": "^1.21.5"
+  }
+}
