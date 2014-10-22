@@ -21,6 +21,19 @@ module.exports = function(grunt) {
 
     grunt.registerTask('test', 'mochaTest:test');
 
+    grunt.registerTask('start', 'start xi-core and restart on changes', function() {
+        var spawn = require('child_process').spawn;
+        var cb = this.async();
+        var xi = spawn('node', ['index.js', '--port=2014'],
+                       {stdio: 'inherit', cwd: process.cwd()});
+        xi.on('close', function(code) {
+            if (code !== 0)
+                grunt.log.error();
+            cb();
+        });
+    });
+
     grunt.loadNpmTasks('grunt-mocha-test');
     grunt.loadNpmTasks('grunt-contrib-watch');
+    grunt.loadNpmTasks('grunt-nodemon');
 };

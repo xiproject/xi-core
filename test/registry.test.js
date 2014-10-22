@@ -1,5 +1,5 @@
 var should = require('should');
-var registry = require('../registry');
+var registry = require('../lib/registry');
 
 function mockRequest(params) {
     var request = {
