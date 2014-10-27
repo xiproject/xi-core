@@ -2,7 +2,7 @@ var should = require('should');
 var registry = require('../lib/registry');
 
 function mockRequest(params) {
-    var request = {
+   var request = {
         log: {
             error: function() {},
             warn: function() {},
@@ -37,7 +37,6 @@ describe('Registry', function() {
         describe('#getAgent', function() {
             it ('should be able to retrieve agent later', function() {
                 var agent = registry.getAgent(agentId);
-                (agent===null).should.not.be.ok;
                 agent.should.be.an.Object;
                 agent.id.should.equal(agentId);
             });
