@@ -56,7 +56,7 @@ describe('Registry', function() {
             };
             for (var i = 0; i < 10; ++i) {
                 registry.register(mockRequest({
-                    url: 'http://10.10.10.10:8080',
+                    url: 'http://10.10.10.10:' + i,
                     name: 'Foobar'
                 }), mockResponse(function(res) {
                     agentIds.push(res.id);
