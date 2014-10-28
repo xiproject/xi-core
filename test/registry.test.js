@@ -22,6 +22,9 @@ function mockResponse(cb) {
 
 describe('Registry', function() {
     var agentId;
+    before(function() {
+        registry.eraseAll();
+    });
     describe('#register', function() {
         it('should register without error', function(done) {
             registry.register(mockRequest({
@@ -39,6 +42,18 @@ describe('Registry', function() {
                 var agent = registry.getAgent(agentId);
                 agent.should.be.an.Object;
                 agent.id.should.equal(agentId);
+            });
+        });
+        it('should delete old agent if new agent with same URL registers', function(done) {
+            registry.register(mockRequest({
+                url: 'http://10.10.10.10:8080',
+                name: 'Foobar2'
+            }), mockResponse(function(res) {
+                agentId = res.id;
+            }), function() {
+                registry.getAgents().length.should.equal(1);
+                registry.getAgent(agentId).name.should.equal('Foobar2');
+                done();
             });
         });
     });
