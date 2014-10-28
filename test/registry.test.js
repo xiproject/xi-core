@@ -57,6 +57,42 @@ describe('Registry', function() {
             });
         });
     });
+
+    describe('#lookUp', function() {
+        var testName = 'FoobarLookUp';
+        before(function(done) {
+            registry.eraseAll();
+            registry.register(mockRequest({
+                url: 'http://10.10.10.10:8080',
+                name: testName
+            }), mockResponse(function(res) {
+                agentId = res.id;
+            }), done);
+        });
+        it('should be able to retrieve agent by id', function(done) {
+            var agent;
+            registry.lookUp(mockRequest({
+                id: agentId
+            }), mockResponse(function(res) {
+                agent = res.agent;
+            }), function() {
+                agent.name.should.equal(testName);
+                done();
+            });
+        });
+        it('should be able to retrieve agent by name', function(done) {
+            var agent;
+            registry.lookUp(mockRequest({
+                name: testName
+            }), mockResponse(function(res) {
+                agent = res.agent;
+            }), function() {
+                agent.id.should.equal(agentId);
+                done();
+            });
+        });
+    });
+
     var agentIds = [];
     describe('#getAgents', function() {
         before(function() {
