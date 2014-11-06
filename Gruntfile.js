@@ -9,13 +9,29 @@ module.exports = function(grunt) {
         },
         mochaTest: {
             test: {
-                src: ['test/**/*.js']
+                src: ['test/**/*.js'],
+                options: {
+                    require: ['should', 'coverage/blanket']
+                }
             },
             watch: {
                 options: {
                     growl: true
                 },
                 src: ['test/**/*.js']
+            },
+            coverage: {
+                options: {
+                    reporter: 'html-cov',
+                    quiet: true,
+                    captureFile: 'coverage.html'
+                },
+                src: ['test/**/*.js']
+            }
+        },
+        open: {
+            coverage: {
+                path: 'coverage.html'
             }
         },
         watch: {
@@ -25,6 +41,7 @@ module.exports = function(grunt) {
     });
 
     grunt.registerTask('test', ['env:test', 'mochaTest:test']);
+    grunt.registerTask('coverage', ['env:test', 'mochaTest:test', 'mochaTest:coverage', 'open:coverage']);
 
     grunt.registerTask('start', 'start xi-core and restart on changes', function() {
         var spawn = require('child_process').spawn;
@@ -42,4 +59,5 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-nodemon');
     grunt.loadNpmTasks('grunt-env');
+    grunt.loadNpmTasks('grunt-open');
 };
