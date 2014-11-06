@@ -2,6 +2,11 @@ module.exports = function(grunt) {
 
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
+        env: {
+            test: {
+                NODE_ENV: 'test'
+            }
+        },
         mochaTest: {
             test: {
                 src: ['test/**/*.js']
@@ -15,11 +20,11 @@ module.exports = function(grunt) {
         },
         watch: {
             files: ['lib/**/*.js', 'test/**/*.js'],
-            tasks: ['mochaTest:watch']
+            tasks: ['env:test', 'mochaTest:watch']
         }
     });
 
-    grunt.registerTask('test', 'mochaTest:test');
+    grunt.registerTask('test', ['env:test', 'mochaTest:test']);
 
     grunt.registerTask('start', 'start xi-core and restart on changes', function() {
         var spawn = require('child_process').spawn;
@@ -36,4 +41,5 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-mocha-test');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-nodemon');
+    grunt.loadNpmTasks('grunt-env');
 };
