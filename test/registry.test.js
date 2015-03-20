@@ -96,7 +96,7 @@ describe('Registry', function() {
                 }), onRegistered);
             }
         });
-        it ('should retrieve the ten agents from the registry', function() {
+        it('should retrieve the ten agents from the registry', function() {
             var agents = registry.getAgents();
             agents.length.should.equal(10);
             for (var i = 0; i < agents.length; ++i) {
