@@ -86,25 +86,13 @@ describe('Event', function() {
         var subscribedEvents2 = ['xi.event.another.different.input', 'xi.event.input.text'];
         var oldCreateJsonClient = restify.createJsonClient;
 
-        before(function(done) {
-
-            var registered = 0;
-            var next = function() {
-                registered += 1;
-                if (registered === 2) {
-                    done();
-                }
-            };
-            registry.register(mock.mockRequest({
+        before(function() {
+            agentIds.push(registry.register({
                 url: 'http://10.10.10.10:' + Math.round(10000 * Math.random())
-            }), mock.mockResponse(function(res) {
-                agentIds.push(res.id);
-            }), next);
-            registry.register(mock.mockRequest({
+            }).id);
+            agentIds.push(registry.register({
                 url: 'http://10.10.10.10:' + Math.round(10000 * Math.random())
-            }), mock.mockResponse(function(res) {
-                agentIds.push(res.id);
-            }), next);
+            }).id);
         });
 
         after(function() {
@@ -113,57 +101,46 @@ describe('Event', function() {
         });
 
         describe('#subscribe', function() {
-            it('should subscribe agents to events', function(done) {
+            it('should subscribe agents to events', function() {
+                event.subscribe(
+                    agentIds[0],
+                    subscribedEvents1);
+                var agent = registry.getAgent(agentIds[0]);
+                agent.subscribe.events.should.eql(subscribedEvents1);
 
-                var complete = (function() {
-                    var called = 0;
-                    return function() {
-                        called += 1;
-                        if (called === 2) {
-                            done();
-                        }
-                    };
-                })();
+                event.subscribe(
+                    agentIds[1],
+                    subscribedEvents2
+                );
+                agent = registry.getAgent(agentIds[1]);
+                agent.subscribe.events.should.eql(subscribedEvents2);
 
-                event.subscribe(mock.mockRequest({
-                    id: agentIds[0],
-                    events: subscribedEvents1
-                }), mock.mockResponse(function(res) {}), function() {
-                    var agent = registry.getAgent(agentIds[0]);
-                    agent.subscribe.events.should.eql(subscribedEvents1);
-                    complete();
-                });
-
-                event.subscribe(mock.mockRequest({
-                    id: agentIds[1],
-                    events: subscribedEvents2
-                }), mock.mockResponse(function(res) {}), function() {
-                    var agent = registry.getAgent(agentIds[1]);
-                    agent.subscribe.events.should.eql(subscribedEvents2);
-                    complete();
-                });
             });
         });
 
         describe('#create', function() {
 
-            it('should create a new event', function(done) {
+            it('should create a new event', function() {
 
-                var testEvent = {xi: {event: {input: {text: 'test'}}}};
+                var testEvent = {
+                    xi: {
+                        event: {
+                            input: {
+                                text: 'test'
+                            }
+                        }
+                    }
+                };
 
                 restify.createJsonClient = mock.mockCreateJsonClient(function(method, url, event, done) {
                     method.should.equal('POST');
                     url.should.equal('/event');
                     event.should.eql(testEvent);
-                    done();
                 });
 
-                event.create(mock.mockRequest(testEvent),
-                             mock.mockResponse(function(res) {
-                                 event.getValue(res, 'xi.event.id').should.be.ok;
-                             }), function() {
-                                 done();
-                             });
+                var retEvent = event.create(testEvent);
+                event.getValue(retEvent, 'xi.event.id').should.be.ok;
+
             });
             it('should send a response to all subscribed agents', function(done) {
                 done();

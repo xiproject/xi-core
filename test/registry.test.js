@@ -8,70 +8,53 @@ describe('Registry', function() {
         registry.eraseAll();
     });
     describe('#register', function() {
-        it('should register without error', function(done) {
-            registry.register(mock.mockRequest({
+        it('should register without error', function() {
+            agentId = registry.register({
                 url: 'http://10.10.10.10:8080',
                 name: 'Foobar'
-            }), mock.mockResponse(function(res) {
-                agentId = res.id;
-            }), done);
+            }).id;
         });
-        it ('should return an id', function() {
+        it('should return an id', function() {
             agentId.should.be.type('string');
         });
         describe('#getAgent', function() {
-            it ('should be able to retrieve agent later', function() {
+            it('should be able to retrieve agent later', function() {
                 var agent = registry.getAgent(agentId);
                 agent.should.be.an.Object;
                 agent.id.should.equal(agentId);
             });
         });
-        it('should delete old agent if new agent with same URL registers', function(done) {
-            registry.register(mock.mockRequest({
+        it('should delete old agent if new agent with same URL registers', function() {
+            agentId = registry.register({
                 url: 'http://10.10.10.10:8080',
                 name: 'Foobar2'
-            }), mock.mockResponse(function(res) {
-                agentId = res.id;
-            }), function() {
-                registry.getAgents().length.should.equal(1);
-                registry.getAgent(agentId).name.should.equal('Foobar2');
-                done();
-            });
+            }).id;
+            registry.getAgents().length.should.equal(1);
+            registry.getAgent(agentId).name.should.equal('Foobar2');
         });
     });
 
     describe('#lookUp', function() {
         var testName = 'FoobarLookUp';
-        before(function(done) {
+        before(function() {
             registry.eraseAll();
-            registry.register(mock.mockRequest({
+            agentId = registry.register({
                 url: 'http://10.10.10.10:8080',
                 name: testName
-            }), mock.mockResponse(function(res) {
-                agentId = res.id;
-            }), done);
+            }).id;
+
         });
-        it('should be able to retrieve agent by id', function(done) {
-            var agent;
-            registry.lookUp(mock.mockRequest({
+        it('should be able to retrieve agent by id', function() {
+            var agent = registry.lookUp({
                 id: agentId
-            }), mock.mockResponse(function(res) {
-                agent = res.agent;
-            }), function() {
-                agent.name.should.equal(testName);
-                done();
-            });
+            }).agent;
+            agent.name.should.equal(testName);
         });
-        it('should be able to retrieve agent by name', function(done) {
-            var agent;
-            registry.lookUp(mock.mockRequest({
+        it('should be able to retrieve agent by name', function() {
+            var agent = registry.lookUp({
                 name: testName
-            }), mock.mockResponse(function(res) {
-                agent = res.agent;
-            }), function() {
-                agent.id.should.equal(agentId);
-                done();
-            });
+            }).agent;
+            agent.id.should.equal(agentId);
         });
     });
 
@@ -80,20 +63,13 @@ describe('Registry', function() {
         before(function() {
             registry.eraseAll();
         });
-        it ('should register ten agents', function(done) {
-            var registered = 0;
-            var onRegistered = function() {
-                registered++;
-                if (registered === 10)
-                    done();
-            };
+        it('should register ten agents', function() {
+
             for (var i = 0; i < 10; ++i) {
-                registry.register(mock.mockRequest({
+                agentIds.push(registry.register({
                     url: 'http://10.10.10.10:' + i,
                     name: 'Foobar'
-                }), mock.mockResponse(function(res) {
-                    agentIds.push(res.id);
-                }), onRegistered);
+                }).id);
             }
         });
         it('should retrieve the ten agents from the registry', function() {
