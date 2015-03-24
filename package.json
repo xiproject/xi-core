@@ -6,7 +6,7 @@
     "port": "2014"
   },
   "scripts": {
-    "start": "node index.js | ./node_modules/.bin/bunyan",
+    "start": "node index.js --port=2014",
     "test": "grunt test"
   },
   "author": "Vikrant Varma",
